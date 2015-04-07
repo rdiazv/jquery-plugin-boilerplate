@@ -1,7 +1,8 @@
 
 # $('elem').myPlugin optionA: 'myNewValue'
 # $('elem').myPlugin 'customMethod', 'test'
-#
+# $('elem').myPlugin 'destroy'
+
 do ($ = window.jQuery) ->
 
   class MyPlugin
@@ -11,9 +12,16 @@ do ($ = window.jQuery) ->
     constructor: (el, options) ->
       @options = $.extend {}, @defaults, options
       @$el = $(el)
+      @$el.on 'click.myPlugin', @onClick
+
+    onClick: (event) =>
+      @customMethod 'clicked!'
 
     customMethod: (text) ->
       console.log 'customMethod', text, @options.optionA
+
+    destroy: ->
+      @$el.off('.myPlugin').removeData('myPlugin')
 
   $.fn.extend myPlugin: (method, args...) ->
     @each ->
