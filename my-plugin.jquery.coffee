@@ -30,16 +30,19 @@ do ($ = window.jQuery) ->
 
   $.fn.extend myPlugin: (method, args...) ->
     @each ->
-      data = $(this).data 'myPlugin'
+      instance = $(this).data 'myPlugin'
 
-      unless data?
-        data = new MyPlugin this, method
-        $(this).data myPlugin: data
+      if not instance?
+        if (not method? or $.isPlainObject(method))
+          instance = new MyPlugin this, method
+          $(this).data myPlugin: instance
 
-      return unless _.isString method
+        else if method != 'destroy'
+          $.error 'myPlugin has not been initialized in this element'
 
-      if _.isFunction data[method]
-        data[method].apply data, args
+      else if typeof method == 'string'
+        if $.isFunction(instance[method])
+          instance[method].apply instance, args
 
-      else
-        $.error 'The method #{method} don\'t exists on myPlugin'
+        else
+          $.error "Method #{method} does not exists on myPlugin"
