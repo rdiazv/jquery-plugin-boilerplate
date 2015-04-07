@@ -13,6 +13,10 @@ do ($ = window.jQuery) ->
       @options = $.extend {}, @defaults, options
       @$el = $(el)
       @$el.on 'click.myPlugin', @onClick
+      @build()
+
+    build: ->
+      @$markup = $('<div>Initialized</div>').insertAfter(@$el)
 
     onClick: (event) =>
       @customMethod 'clicked!'
@@ -21,6 +25,7 @@ do ($ = window.jQuery) ->
       console.log 'customMethod', text, @options.optionA
 
     destroy: ->
+      @$markup.off().remove()
       @$el.off('.myPlugin').removeData('myPlugin')
 
   $.fn.extend myPlugin: (method, args...) ->
